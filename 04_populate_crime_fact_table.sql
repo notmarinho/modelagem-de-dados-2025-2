@@ -172,3 +172,26 @@ SELECT
 UNION ALL
 SELECT 
     'CRIME_LOCALIDADE' AS Tabela, COUNT(*) AS Total_Registros FROM CRIME_LOCALIDADE;
+
+
+SELECT
+    c.DR_NO,
+    c.Date_Rptd,
+    c.DATE_OCC,
+    c.TIME_OCC,
+    cc.Crm_Cd_FK AS Crime_Code,
+    v.Vict_Age,
+    v.Vict_Sex,
+    v.Vict_Descent,
+    l.LAT,
+    l.LON,
+    l.Rpt_Dist_No
+FROM
+    CRIME c
+LEFT JOIN CRIME_CODIGO cc ON c.DR_NO = cc.DR_NO_FK
+LEFT JOIN CRIME_VITIMA cv ON c.DR_NO = cv.DR_NO_FK
+LEFT JOIN VITIMA v ON cv.Vitima_ID_FK = v.Vitima_ID
+LEFT JOIN CRIME_LOCALIDADE cl ON c.DR_NO = cl.DR_NO_FK
+LEFT JOIN LOCALIDADE l ON cl.Localidade_ID_FK = l.Localidade_ID
+ORDER BY c.DATE_OCC DESC
+LIMIT 100;
