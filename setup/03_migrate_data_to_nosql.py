@@ -8,6 +8,10 @@ import json
 from datetime import date, timedelta, datetime
 from decimal import Decimal
 
+
+"""
+Esse script está enviando diretamente pro nosso banco em nuvem, sinta-se a vontade para testá-lo
+"""
 CONFIG = {
     "mysql": {
         "host": "187.87.135.20",
