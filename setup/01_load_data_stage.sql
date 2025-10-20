@@ -49,7 +49,7 @@ CREATE INDEX idx_stage_location ON `CRIME_STAGE`(`LAT`, `LON`);
 
 SELECT 'CRIME_STAGE table created successfully!' AS Result;
 
-#Altere o caminho pro arquivo na SUA máquina
+-- Altere o caminho pro arquivo na SUA máquina
 LOAD DATA LOCAL INFILE '/Users/marinho/Documents/Projects/ufrpe/MD/crime_from_2023_sanitized.csv'
 INTO TABLE CRIME_STAGE
 CHARACTER SET utf8mb4
