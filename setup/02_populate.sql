@@ -163,17 +163,76 @@ ON DUPLICATE KEY UPDATE
 
 -- Populando Tabela Fato e Relações
 -- --------------------------------------------------
+-- Transformação da Dimensão Tempo:
+-- - Date_Rptd e DATE_OCC: Conversão de string para DATE com tratamento de nulos/inválidos
+-- - TIME_OCC: Conversão do formato HHMM (ex: 1140 = 11:40) para TIME (HH:MM:SS)
+--   Quando não houver informação de minutos, usa 00 como padrão
+-- IMPORTANTE: Registros com TIME_OCC inválido ou nulo serão DESCONSIDERADOS (não inseridos)
 INSERT IGNORE INTO CRIME (DR_NO, Date_Rptd, DATE_OCC, TIME_OCC, Status_FK, Weapon_Used_Cd_FK, Location_Type_Cd_FK)
 SELECT DISTINCT
     s.DR_NO,
-    STR_TO_DATE(s.Date_Rptd, '%m/%d/%Y %h:%i:%s %p'),
-    STR_TO_DATE(s.DATE_OCC, '%m/%d/%Y %h:%i:%s %p'),
-    SEC_TO_TIME(CAST(s.TIME_OCC AS UNSIGNED) * 60),
+    -- Transformação de Date_Rptd: Converte string para DATE, retorna NULL se inválido ou vazio
+    CASE 
+        WHEN s.Date_Rptd IS NULL OR TRIM(s.Date_Rptd) = '' THEN NULL
+        ELSE STR_TO_DATE(s.Date_Rptd, '%m/%d/%Y %h:%i:%s %p')
+    END AS Date_Rptd,
+    -- Transformação de DATE_OCC: Converte string para DATE, retorna NULL se inválido ou vazio
+    CASE 
+        WHEN s.DATE_OCC IS NULL OR TRIM(s.DATE_OCC) = '' THEN NULL
+        ELSE STR_TO_DATE(s.DATE_OCC, '%m/%d/%Y %h:%i:%s %p')
+    END AS DATE_OCC,
+    -- Transformação de TIME_OCC: 
+    -- Formato de entrada: HHMM ou HMM (ex: 1140 = 11:40, 1630 = 16:30, 110 = 01:10, 816 = 08:16)
+    -- Extrai horas e minutos dos últimos 2 dígitos (minutos) e o restante (horas)
+    -- Se não houver informação de minutos, usa 00 como padrão
+    -- Valida que horas estão entre 0-23 e minutos entre 0-59
+    CASE 
+        WHEN s.TIME_OCC IS NULL OR TRIM(s.TIME_OCC) = '' OR CAST(s.TIME_OCC AS UNSIGNED) = 0 THEN NULL
+        ELSE 
+            CASE
+                -- Formato com 3 ou 4 dígitos: extrai horas e minutos
+                -- Últimos 2 dígitos são sempre minutos, o restante são horas
+                WHEN LENGTH(CAST(s.TIME_OCC AS UNSIGNED)) >= 3 THEN
+                    CASE
+                        -- Extrai minutos (últimos 2 dígitos) e horas (restante)
+                        -- Valida horas (0-23) e minutos (0-59)
+                        WHEN (CAST(s.TIME_OCC AS UNSIGNED) % 100) BETWEEN 0 AND 59 
+                             AND FLOOR(CAST(s.TIME_OCC AS UNSIGNED) / 100) BETWEEN 0 AND 23 THEN
+                            SEC_TO_TIME(
+                                (FLOOR(CAST(s.TIME_OCC AS UNSIGNED) / 100) * 3600) + 
+                                ((CAST(s.TIME_OCC AS UNSIGNED) % 100) * 60)
+                            )
+                        ELSE NULL
+                    END
+                -- Formato H ou HH (1-2 dígitos): apenas horas, minutos = 00
+                WHEN LENGTH(CAST(s.TIME_OCC AS UNSIGNED)) <= 2 THEN
+                    CASE
+                        WHEN CAST(s.TIME_OCC AS UNSIGNED) BETWEEN 0 AND 23 THEN
+                            SEC_TO_TIME(CAST(s.TIME_OCC AS UNSIGNED) * 3600)
+                        ELSE NULL
+                    END
+                ELSE NULL
+            END
+    END AS TIME_OCC,
     CASE WHEN s.Status IS NULL OR s.Status = '' THEN 'UN' ELSE s.Status END,
     CASE WHEN s.Weapon_Used_Cd = '' OR s.Weapon_Used_Cd IS NULL OR CAST(s.Weapon_Used_Cd AS DECIMAL) = 0 THEN NULL ELSE CAST(CAST(s.Weapon_Used_Cd AS DECIMAL(10,1)) AS SIGNED) END,
     CASE WHEN s.Location_Type_Cd = '' OR s.Location_Type_Cd IS NULL OR CAST(s.Location_Type_Cd AS DECIMAL) = 0 THEN NULL ELSE CAST(s.Location_Type_Cd AS DECIMAL(5,1)) END
 FROM CRIME_STAGE s
-WHERE EXISTS (SELECT 1 FROM STATUS st WHERE st.Status = CASE WHEN s.Status IS NULL OR s.Status = '' THEN 'UN' ELSE s.Status END);
+WHERE EXISTS (SELECT 1 FROM STATUS st WHERE st.Status = CASE WHEN s.Status IS NULL OR s.Status = '' THEN 'UN' ELSE s.Status END)
+  -- Filtra registros onde TIME_OCC seria NULL: desconsidera registros sem informação de tempo válida
+  AND s.TIME_OCC IS NOT NULL 
+  AND TRIM(s.TIME_OCC) != ''
+  AND CAST(s.TIME_OCC AS UNSIGNED) != 0
+  AND (
+    -- Valida formato com 3 ou 4 dígitos (HHMM ou HMM)
+    (LENGTH(CAST(s.TIME_OCC AS UNSIGNED)) >= 3 
+     AND (CAST(s.TIME_OCC AS UNSIGNED) % 100) BETWEEN 0 AND 59 
+     AND FLOOR(CAST(s.TIME_OCC AS UNSIGNED) / 100) BETWEEN 0 AND 23)
+    OR
+    -- Valida formato com 1 ou 2 dígitos (H ou HH)
+    (LENGTH(CAST(s.TIME_OCC AS UNSIGNED)) <= 2 
+     AND CAST(s.TIME_OCC AS UNSIGNED) BETWEEN 0 AND 23)
+  );
 
 INSERT INTO CRIME_CODE (DR_NO_FK, Crm_Cd_FK, Seq)
 SELECT s.DR_NO, s.Crm_Cd, 1 FROM CRIME_STAGE s
