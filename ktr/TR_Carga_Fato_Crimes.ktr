@@ -1150,7 +1150,7 @@ var lookup_DR_NO = DR_NO;
     cc.Crm_Cd_FK, 
     c.DR_NO, 
     c.DATE_OCC, 
-    SEC_TO_TIME(TIME_TO_SEC(c.TIME_OCC) % 86400) AS TIME_OCC_Corrigido, 
+    SEC_TO_TIME(FLOOR(TIME_TO_SEC(c.TIME_OCC) / 60) * 60) AS TIME_OCC_Corrigido, 
     c.Status_FK, 
     cl.Location_ID_FK, 
     c.Weapon_Used_Cd_FK, 
@@ -1162,7 +1162,8 @@ JOIN
 LEFT JOIN 
     DB_CRIMES_LA.CRIME_LOCATION AS cl ON c.DR_NO = cl.DR_NO_FK
 WHERE 
-    c.DATE_OCC IS NOT NULL</sql>
+    c.DATE_OCC IS NOT NULL 
+    AND c.TIME_OCC IS NOT NULL</sql>
     <limit>0</limit>
     <lookup/>
     <execute_each_row>N</execute_each_row>

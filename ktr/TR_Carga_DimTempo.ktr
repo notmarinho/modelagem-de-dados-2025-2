@@ -711,9 +711,10 @@ if (Hora_do_Dia &lt; 6) {
     <connection>Fonte_Crimes_Normalizado</connection>
     <sql>SELECT DISTINCT
     DATE(DATE_OCC) AS Data_Completa,
-    SEC_TO_TIME(TIME_TO_SEC(TIME_OCC) % 86400) AS TIME_OCC
+    SEC_TO_TIME(FLOOR(TIME_TO_SEC(TIME_OCC) / 60) * 60) AS TIME_OCC
 FROM DB_CRIMES_LA.CRIME
-WHERE DATE_OCC IS NOT NULL</sql>
+WHERE DATE_OCC IS NOT NULL 
+  AND TIME_OCC IS NOT NULL</sql>
     <limit>0</limit>
     <lookup/>
     <execute_each_row>N</execute_each_row>
