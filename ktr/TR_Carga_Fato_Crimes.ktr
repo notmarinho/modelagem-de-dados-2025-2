@@ -1019,6 +1019,19 @@ var lookup_Loc_ID = (Location_ID_FK == null) ? 0 : Location_ID_FK;
 
 // O DR_NO (para DimVitima) não deve ser nulo
 var lookup_DR_NO = DR_NO;
+
+// Calcula Tempo_Entre_Ocorrencia_Relato em horas
+var Tempo_Entre_Ocorrencia_Relato = null;
+if (DATE_OCC != null && Date_Rptd != null) {
+    var jsDate_OCC = new Date(DATE_OCC);
+    var jsDate_Rptd = new Date(Date_Rptd);
+    var diffMs = jsDate_Rptd.getTime() - jsDate_OCC.getTime();
+    var diffHours = diffMs / (1000 * 60 * 60);
+    Tempo_Entre_Ocorrencia_Relato = diffHours;
+}
+
+// Idade_Vitima já vem do SELECT, apenas passa adiante
+var Idade_Vitima = Vict_Age;
         </jsScript_script>
       </jsScript>
     </jsScripts>
@@ -1058,6 +1071,22 @@ var lookup_DR_NO = DR_NO;
       <field>
         <name>lookup_DR_NO</name>
         <rename>lookup_DR_NO</rename>
+        <type>Integer</type>
+        <length>-1</length>
+        <precision>-1</precision>
+        <replace>N</replace>
+      </field>
+      <field>
+        <name>Tempo_Entre_Ocorrencia_Relato</name>
+        <rename>Tempo_Entre_Ocorrencia_Relato</rename>
+        <type>Number</type>
+        <length>-1</length>
+        <precision>-1</precision>
+        <replace>N</replace>
+      </field>
+      <field>
+        <name>Idade_Vitima</name>
+        <rename>Idade_Vitima</rename>
         <type>Integer</type>
         <length>-1</length>
         <precision>-1</precision>
@@ -1118,6 +1147,12 @@ var lookup_DR_NO = DR_NO;
       <field>
         <name>Qtde_Ocorrencias</name>
       </field>
+      <field>
+        <name>Tempo_Entre_Ocorrencia_Relato</name>
+      </field>
+      <field>
+        <name>Idade_Vitima</name>
+      </field>
       <select_unspecified>N</select_unspecified>
     </fields>
     <attributes/>
@@ -1150,18 +1185,22 @@ var lookup_DR_NO = DR_NO;
     cc.Crm_Cd_FK, 
     c.DR_NO, 
     c.DATE_OCC, 
+    c.Date_Rptd,
     SEC_TO_TIME(FLOOR(TIME_TO_SEC(c.TIME_OCC) / 60) * 60) AS TIME_OCC_Corrigido, 
     c.Status_FK, 
     cl.Location_ID_FK, 
     c.Weapon_Used_Cd_FK, 
-    c.Location_Type_Cd_FK
-FROM 
-    DB_CRIMES_LA.CRIME_CODE AS cc
-JOIN 
-    DB_CRIMES_LA.CRIME AS c ON cc.DR_NO_FK = c.DR_NO
-LEFT JOIN 
-    DB_CRIMES_LA.CRIME_LOCATION AS cl ON c.DR_NO = cl.DR_NO_FK
-WHERE 
+    c.Location_Type_Cd_FK,
+    v.Vict_Age
+    FROM 
+        DB_CRIMES_LA.CRIME_CODE AS cc
+    JOIN 
+        DB_CRIMES_LA.CRIME AS c ON cc.DR_NO_FK = c.DR_NO
+    LEFT JOIN 
+        DB_CRIMES_LA.CRIME_LOCATION AS cl ON c.DR_NO = cl.DR_NO_FK
+    LEFT JOIN
+        DB_CRIMES_LA.VICTIM AS v ON c.DR_NO = v.DR_NO
+    WHERE 
     c.DATE_OCC IS NOT NULL 
     AND c.TIME_OCC IS NOT NULL</sql>
     <limit>0</limit>
@@ -1249,6 +1288,14 @@ WHERE
       <field>
         <column_name>Qtde_Ocorrencias</column_name>
         <stream_name>Qtde_Ocorrencias</stream_name>
+      </field>
+      <field>
+        <column_name>Tempo_Entre_Ocorrencia_Relato</column_name>
+        <stream_name>Tempo_Entre_Ocorrencia_Relato</stream_name>
+      </field>
+      <field>
+        <column_name>Idade_Vitima</column_name>
+        <stream_name>Idade_Vitima</stream_name>
       </field>
     </fields>
     <attributes/>
