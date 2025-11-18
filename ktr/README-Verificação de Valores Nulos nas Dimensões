@@ -1,0 +1,14 @@
+Execute as consultas a seguir no seu MySQL Workbench ou cliente SQL. Elas irão quantificar o número de registros nulos para os atributos mais importantes.
+
+
+Razões para Valores Nulos nas Dimensões:
+
+Dados Ausentes na coluna CRIME_STAGE
+ 
+A coluna permite NULL na sua DDL, os dados simplesmente não foram registrados no sistema fonte. Weapon_Desc é frequentemente nulo no  conjunto de dados, o campo Descricao_Arma na dimensão contém valores nulos.
+
+
+DimLocalizacao e DimVitima
+
+  A coluna na staging é uma string VARCHAR e, ao tentar converter para um tipo numérico na dimensão(DECIMAL para Lat/Lon e SMALLINT para Idade), o valor não é um número válido 'N/A' ou '-', isso pode resulta em NULL.
+
