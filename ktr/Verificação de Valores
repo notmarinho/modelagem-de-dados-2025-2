@@ -1,0 +1,58 @@
+#DimTempo
+
+SELECT
+    COUNT(*) AS Total_Registros,
+    SUM(CASE WHEN Data_Completa IS NULL THEN 1 ELSE 0 END) AS Nulos_Data_Completa,
+    SUM(CASE WHEN Ano IS NULL THEN 1 ELSE 0 END) AS Nulos_Ano,
+    SUM(CASE WHEN Nome_Mes IS NULL THEN 1 ELSE 0 END) AS Nulos_Nome_Mes,
+    SUM(CASE WHEN Dia_da_Semana IS NULL THEN 1 ELSE 0 END) AS Nulos_Dia_da_Semana,
+    SUM(CASE WHEN Hora_do_Dia IS NULL THEN 1 ELSE 0 END) AS Nulos_Hora_do_Dia
+FROM DimTempo;
+
+
+
+#DimLocalizacao
+
+
+SELECT
+    COUNT(*) AS Total_Registros,
+    SUM(CASE WHEN Endereco IS NULL THEN 1 ELSE 0 END) AS Nulos_Endereco,
+    SUM(CASE WHEN Latitude IS NULL THEN 1 ELSE 0 END) AS Nulos_Latitude,
+    SUM(CASE WHEN Longitude IS NULL THEN 1 ELSE 0 END) AS Nulos_Longitude,
+    SUM(CASE WHEN Area_Nome IS NULL THEN 1 ELSE 0 END) AS Nulos_Area_Nome
+FROM DimLocalizacao;
+
+#DimTipoCrime
+
+SELECT
+    COUNT(*) AS Total_Registros,
+    SUM(CASE WHEN Crm_Cd IS NULL THEN 1 ELSE 0 END) AS Nulos_Crm_Cd,
+    SUM(CASE WHEN Descricao_Crime IS NULL THEN 1 ELSE 0 END) AS Nulos_Descricao_Crime
+FROM DimTipoCrime;
+
+#DimArma
+
+SELECT
+    COUNT(*) AS Total_Registros,
+    SUM(CASE WHEN Weapon_Used_Cd IS NULL THEN 1 ELSE 0 END) AS Nulos_Weapon_Used_Cd,
+    SUM(CASE WHEN Descricao_Arma IS NULL THEN 1 ELSE 0 END) AS Nulos_Descricao_Arma
+FROM DimArma;
+
+
+#DimStatus
+
+SELECT
+    COUNT(*) AS Total_Registros,
+    SUM(CASE WHEN Status_Cd IS NULL THEN 1 ELSE 0 END) AS Nulos_Status_Cd,
+    SUM(CASE WHEN Descricao_Status IS NULL THEN 1 ELSE 0 END) AS Nulos_Descricao_Status
+FROM DimStatus;
+
+
+
+#DimTipoLocal
+
+SELECT
+    COUNT(*) AS Total_Registros,
+    SUM(CASE WHEN Location_Type_Cd IS NULL THEN 1 ELSE 0 END) AS Nulos_Location_Type_Cd,
+    SUM(CASE WHEN Descricao_Tipo_Local IS NULL THEN 1 ELSE 0 END) AS Nulos_Descricao_Tipo_Local
+FROM DimTipoLocal;
