@@ -672,7 +672,7 @@
       <eat_row_on_failure>N</eat_row_on_failure>
       <key>
         <name>lookup_Weapon_Cd</name>
-        <field>Weapon_Used_Cd</field>
+        <field>lookup_Weapon_Cd</field>
         <condition>=</condition>
         <name2/>
       </key>
@@ -720,7 +720,7 @@
       <eat_row_on_failure>N</eat_row_on_failure>
       <key>
         <name>lookup_Loc_ID</name>
-        <field>Location_ID_Origem</field>
+        <field>lookup_Loc_ID</field>
         <condition>=</condition>
         <name2/>
       </key>
@@ -768,7 +768,7 @@
       <eat_row_on_failure>N</eat_row_on_failure>
       <key>
         <name>Status_FK</name>
-        <field>Status_Cd</field>
+        <field>Status_FK</field>
         <condition>=</condition>
         <name2/>
       </key>
@@ -816,13 +816,13 @@
       <eat_row_on_failure>N</eat_row_on_failure>
       <key>
         <name>DATE_OCC</name>
-        <field>Data_Completa</field>
+        <field>DATE_OCC</field>
         <condition>=</condition>
         <name2/>
       </key>
       <key>
         <name>lookup_Hora_do_Dia</name>
-        <field>Hora_do_Dia</field>
+        <field>lookup_Hora_do_Dia</field>
         <condition>=</condition>
         <name2/>
       </key>
@@ -870,7 +870,7 @@
       <eat_row_on_failure>N</eat_row_on_failure>
       <key>
         <name>Crm_Cd_FK</name>
-        <field>Crm_Cd</field>
+        <field>Crm_Cd_FK</field>
         <condition>=</condition>
         <name2/>
       </key>
@@ -918,7 +918,7 @@
       <eat_row_on_failure>N</eat_row_on_failure>
       <key>
         <name>lookup_Loc_Type_Cd</name>
-        <field>Location_Type_Cd</field>
+        <field>lookup_Loc_Type_Cd</field>
         <condition>=</condition>
         <name2/>
       </key>
@@ -966,7 +966,7 @@
       <eat_row_on_failure>N</eat_row_on_failure>
       <key>
         <name>lookup_DR_NO</name>
-        <field>DR_NO_Origem</field>
+        <field>lookup_DR_NO</field>
         <condition>=</condition>
         <name2/>
       </key>

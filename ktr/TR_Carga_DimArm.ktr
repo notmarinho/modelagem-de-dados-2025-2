@@ -598,7 +598,7 @@
       <schema_name/>
     </partitioning>
     <connection>Fonte_crimes</connection>
-    <sql>SELECT Weapon_Used_Cd, Weapon_Desc FROM DB_CRIMES_LA.WEAPON</sql>
+    <sql>SELECT Weapon_Used_Cd, Weapon_Desc FROM WEAPON</sql>
     <limit>0</limit>
     <lookup/>
     <execute_each_row>N</execute_each_row>
